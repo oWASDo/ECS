@@ -1,4 +1,28 @@
 #pragma once
+
+
+struct Indexes
+{
+private:
+	size_t index1;
+	size_t index2;
+public:
+	Indexes() {
+		index1 = 0;
+		index2 = 0;
+	}
+	Indexes(size_t i1, size_t i2) :index1(i1), index2(i2) {
+
+	}
+
+	size_t Ind1() {
+		return index1;
+	}
+	size_t Ind2() {
+		return index2;
+	}
+};
+
 struct Integet
 {
 	Integet()

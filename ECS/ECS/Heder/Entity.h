@@ -14,6 +14,7 @@ public:
 	//void AddType(std::string type, int index);
 	void AddType(int type, int index);
 	bool HasType(int type);
+	int GetIndexByType(int type);
 
 private:
 	//map<std::string, long long > components;

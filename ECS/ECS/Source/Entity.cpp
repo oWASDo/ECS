@@ -26,3 +26,14 @@ bool Entity::HasType(int type) {
 	}
 	return result;
 }
+int Entity::GetIndexByType(int type) {
+	int index = 0;
+	for (int i : types) {
+		if (i == type)
+		{
+			return typesIndex[index];
+		}
+		index++;
+	}
+	return -1;
+}

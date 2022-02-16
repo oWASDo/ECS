@@ -6,7 +6,7 @@
 #include <string>
 #include <stdexcept>
 #include <memory>
-
+#include"Component.h"
 //using namespace std;
 
 class ECS_Context
@@ -22,6 +22,8 @@ public:
 	void AddComponentToEntity(Entity* entity, T baseData);
 
 
+	template<typename T>
+	void RemoveComponentToEntity(Entity* entity);
 	//template<typename A>
 	//int GetTypes();
 
@@ -51,6 +53,10 @@ private:
 	std::map<std::string, int> typeNumberElement;
 	std::vector<std::string> typrOrder;
 	std::vector<char> datas;
+	std::vector<bool> actives;
+	Indexes GetIdexes(const std::string nameAsString, Entity* entity);
+
+	bool GetFalseInAtype(const std::string nameAsString, int& index);
 };
 
 
@@ -125,7 +131,7 @@ private:
 #pragma endregion
 
 template<typename T>
-void ECS_Context::AddComponentToEntity(Entity* entity, T baseData) {
+void ECS_Context::AddComponentToEntity(Entity* entity, const T baseData) {
 
 	int dataSize = sizeof(T);
 
@@ -146,6 +152,8 @@ void ECS_Context::AddComponentToEntity(Entity* entity, T baseData) {
 	}
 	auto contain = typeMaps.find(nameAsString);
 
+	int f;
+	bool b = GetFalseInAtype(nameAsString, f);
 	if (contain == typeMaps.end())
 	{
 		//exist
@@ -154,7 +162,7 @@ void ECS_Context::AddComponentToEntity(Entity* entity, T baseData) {
 		typeNumberElement.insert(std::pair<std::string, int >(nameAsString, 1));
 		typrOrder.push_back(nameAsString);
 	}
-	else
+	else if (b == false)
 	{
 		typeNumberElement[nameAsString]++;
 	}
@@ -162,22 +170,71 @@ void ECS_Context::AddComponentToEntity(Entity* entity, T baseData) {
 	//entity->AddType(nameAsString, typeNumberElement[nameAsString]);
 	entity->AddType(typeMaps[nameAsString], typeNumberElement[nameAsString]);
 
-	long long index = 0;
-	for (std::string orderedName : typrOrder) {
-		long long size = typeSizes[orderedName];
-		long long numofElements = typeNumberElement[orderedName] + (orderedName == nameAsString ? -1 : 0);
+	//long long index = 0;
+	//for (std::string orderedName : typrOrder) {
+	//	long long size = typeSizes[orderedName];
+	//	long long numofElements = typeNumberElement[orderedName] + (orderedName == nameAsString ? -1 : 0);
+	//	index += size * numofElements;
+	//	if (orderedName == nameAsString)
+	//	{
+	//		break;
+	//	}
+	//}
 
-		index += size * numofElements;
-		if (orderedName == nameAsString)
-		{
-			break;
-		}
+	if (b)
+	{
+		int ff = f;
+		char zeroDatas[sizeof(T)] = {};
+		std::memcpy(&zeroDatas, &baseData, dataSize);
+		actives[f] = true;
+		//TO DO: insert data
 	}
-	auto indexIt = datas.begin() + index;
-	char zeroDatas[sizeof(T)] = {};
-	std::memcpy(&zeroDatas, &baseData, dataSize);
+	else
+	{
+		auto indxes = GetIdexes(nameAsString, entity);
 
-	datas.insert(indexIt, zeroDatas, zeroDatas + sizeof(T));
+		auto indexIt = datas.begin() + indxes.Ind1();
+		char zeroDatas[sizeof(T)] = {};
+
+		std::memcpy(&zeroDatas, &baseData, dataSize);
+
+		auto iter = actives.begin();
+
+		actives.insert(iter, true);
+		datas.insert(indexIt, zeroDatas, zeroDatas + sizeof(T));
+
+	}
+
+}
+template<typename T>
+inline void ECS_Context::RemoveComponentToEntity(Entity* entity)
+{
+	int dataSize = sizeof(T);
+
+	const char* name = typeid(T).name();
+	std::string nameAsString = std::string(name);
+
+	//long long index = 0;
+	//long long indexXX = 0;
+	//for (std::string orderedName : typrOrder) {
+	//	long long size = typeSizes[orderedName];
+	//	long long numofElements = typeNumberElement[orderedName] + (orderedName == nameAsString ? -1 : 0);
+	//	index += size * numofElements;
+	//	indexXX +=  numofElements;
+	//	if (orderedName == nameAsString)
+	//	{
+	//		break;
+	//	}
+	//}
+	auto indxes = GetIdexes(nameAsString, entity);
+
+
+	//actives[indexXX] = false;
+	actives[indxes.Ind2()] = false;
+	char zeroDatas[sizeof(T)] = {};
+
+	//std::memcpy(&datas[index], &zeroDatas, dataSize);
+	std::memcpy(&datas[indxes.Ind1()], &zeroDatas, dataSize);
 
 
 }
