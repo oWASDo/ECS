@@ -181,17 +181,16 @@ void ECS_Context::AddComponentToEntity(Entity* entity, const T baseData) {
 	//	}
 	//}
 
+	auto indxes = GetIdexes(nameAsString, entity);
 	if (b)
 	{
-		int ff = f;
-		char zeroDatas[sizeof(T)] = {};
-		std::memcpy(&zeroDatas, &baseData, dataSize);
 		actives[f] = true;
-		//TO DO: insert data
+		char* charPtr = datas.data();
+		std::memcpy(charPtr + indxes.Ind1(), &baseData, dataSize);
+		
 	}
 	else
 	{
-		auto indxes = GetIdexes(nameAsString, entity);
 
 		auto indexIt = datas.begin() + indxes.Ind1();
 		char zeroDatas[sizeof(T)] = {};

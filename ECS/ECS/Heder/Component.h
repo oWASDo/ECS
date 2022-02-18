@@ -27,7 +27,11 @@ struct Integet
 {
 	Integet()
 	{
-		i = 0;
+		i = 454;
+	}
+	Integet(int j)
+	{
+		i = j;
 	}
 	int i;
 };
@@ -36,7 +40,7 @@ struct Flaoting
 {
 	Flaoting()
 	{
-		f = 0.0f;
+		f = 500.144f;
 	}
 	float f;
 };
@@ -46,6 +50,10 @@ struct Boolean
 	Boolean()
 	{
 		b = false;
+	}
+	Boolean(int i)
+	{
+		b = true;
 	}
 	bool b;
 };
