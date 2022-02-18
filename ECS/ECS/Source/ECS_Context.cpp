@@ -17,15 +17,17 @@ ECS_Context::~ECS_Context()
 }
 
 
-std::shared_ptr<Entity> ECS_Context::AddEntity() {
+Entity* ECS_Context::CreateAndAddEntity() {
 
-	std::shared_ptr<Entity> sharedPointer = std::make_shared<Entity>();
-	entities.push_back(sharedPointer);
-	return sharedPointer;
+	//create new entity and adde to the Entities vector
+	entities.push_back(Entity());
+	std::vector <Entity>::iterator it = entities.begin();
+	Entity* p = &(*it);
+	return p;
 }
 
 
-Indexes ECS_Context::GetIdexes(const std::string nameAsString, Entity* entity) {
+Indicies ECS_Context::GetIdexes(const std::string nameAsString, Entity* entity) {
 	size_t index = 0;
 	size_t indexXX = 0;
 	int indexType = typeMaps[nameAsString];
@@ -33,8 +35,7 @@ Indexes ECS_Context::GetIdexes(const std::string nameAsString, Entity* entity) {
 
 	for (std::string orderedName : typrOrder) {
 		size_t size = typeSizes[orderedName];
-		size_t numofElements =
-			typeNumberElement[orderedName] +
+		int numofElements = typeNumberElement[orderedName] +
 			(orderedName == nameAsString ? -1 : 0);
 
 		size_t numOfElements2 =
@@ -48,7 +49,7 @@ Indexes ECS_Context::GetIdexes(const std::string nameAsString, Entity* entity) {
 		}
 		indexXX += numOfElements2;
 	}
-	return Indexes(index, indexXX);
+	return Indicies(index, indexXX);
 }
 
 bool ECS_Context::GetFalseInAtype(const std::string nameAsString, int& index) {
@@ -58,15 +59,8 @@ bool ECS_Context::GetFalseInAtype(const std::string nameAsString, int& index) {
 
 	for (std::string orderedName : typrOrder) {
 
-		//size_t size = typeSizes[orderedName];
 		size_t numOfElement = typeNumberElement[orderedName];
 		end += numOfElement;
-
-		/*size_t numofElements =
-			typeNumberElement[orderedName] +
-			(orderedName == nameAsString ? -1 : 0);
-
-		index += size * numofElements;*/
 
 		if (orderedName == nameAsString)
 		{
@@ -74,17 +68,13 @@ bool ECS_Context::GetFalseInAtype(const std::string nameAsString, int& index) {
 			break;
 		}
 		start += numOfElement;
-
 	}
 
-	if (actives.size() != 0 || actives.size() != 0)
+	if (actives.size() != 0/* || actives.size() != 0*/)
 	{
-
 		auto f = actives.begin() + start;
 		auto l = actives.begin() + end;
-		//std::vector<bool> vecs(f, l);
-		//std::vector<bool> vecs(&actives[start], &actives[end]);
-		std::vector<bool> vecs = { f,l };
+		std::vector<bool> vecs = { f, l };
 		bool a = std::find(std::begin(vecs), std::end(vecs), true) == std::end(vecs);
 		int ind = 0;
 		for (bool b : vecs) {
@@ -95,12 +85,7 @@ bool ECS_Context::GetFalseInAtype(const std::string nameAsString, int& index) {
 			}
 			ind++;
 		}
-
-
 	}
-
-
-	//actives.
 
 	return false;
 }

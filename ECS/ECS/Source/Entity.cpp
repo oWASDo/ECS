@@ -13,10 +13,15 @@ Entity::~Entity()
 
 void Entity::AddType(int type, int index) {
 
-	types.push_back(type);
-	typesIndex.push_back(index);
+	if (!HasType(type))
+	{
+		types.push_back(type);
+		typesIndex.push_back(index);
+
+	}
 }
 bool Entity::HasType(int type) {
+
 
 	int i = 0;
 	bool result = false;
@@ -26,6 +31,7 @@ bool Entity::HasType(int type) {
 	}
 	return result;
 }
+
 int Entity::GetIndexByType(int type) {
 	int index = 0;
 	for (int i : types) {

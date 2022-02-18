@@ -1,17 +1,17 @@
 #pragma once
 
 
-struct Indexes
+struct Indicies
 {
 private:
 	size_t index1;
 	size_t index2;
 public:
-	Indexes() {
+	Indicies() {
 		index1 = 0;
 		index2 = 0;
 	}
-	Indexes(size_t i1, size_t i2) :index1(i1), index2(i2) {
+	Indicies(size_t i1, size_t i2) :index1(i1), index2(i2) {
 
 	}
 
@@ -27,35 +27,39 @@ struct Integet
 {
 	Integet()
 	{
-		i = 454;
+		integer = 0;
 	}
-	Integet(int j)
+	Integet(int newInt): integer(newInt)
 	{
-		i = j;
+
 	}
-	int i;
+	int integer;
 };
 
 struct Flaoting
 {
 	Flaoting()
 	{
-		f = 500.144f;
+		_float = 0.0f;
 	}
-	float f;
+	Flaoting(float newFlaot) : _float(newFlaot)
+	{
+
+	}
+	float _float;
 };
 
 struct Boolean
 {
 	Boolean()
 	{
-		b = false;
+		_bool = false;
 	}
-	Boolean(int i)
+	Boolean(bool newBool): _bool(newBool)
 	{
-		b = true;
+		_bool = true;
 	}
-	bool b;
+	bool _bool;
 };
 
 
@@ -63,7 +67,15 @@ struct Vector3
 {
 	Vector3()
 	{
-			
+		x = 0.0f;
+		y = 0.0f;
+		z = 0.0f;
+	}
+	Vector3(float newX, float newY, float newZ):x(newX),y(newY),z(newZ)
+	{
+		x = 0.0f;
+		y = 0.0f;
+		z = 0.0f;
 	}
 	float x;
 	float y;
@@ -75,7 +87,13 @@ struct Vector2
 {
 	Vector2()
 	{
-			
+		x = 0.0f;
+		y = 0.0f;
+	}
+	Vector2(float newX, float newY) :x(newX), y(newY)
+	{
+		x = 0.0f;
+		y = 0.0f;
 	}
 	float x;
 	float y;

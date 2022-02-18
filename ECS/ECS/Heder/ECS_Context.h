@@ -14,16 +14,30 @@ class ECS_Context
 public:
 
 	ECS_Context();
-	~ECS_Context();
+	virtual ~ECS_Context();
 
-	std::shared_ptr<Entity> AddEntity();
+	/*
+	* EntityCration
+	* @return retun entity pointer.
+	*/
+	Entity* CreateAndAddEntity();
 
+	/*
+	* Link component to entity
+	* @param entity: entity to link.
+	* @param baseData: inizialization data.
+	*/
 	template<typename T>
 	void AddComponentToEntity(Entity* entity, T baseData);
 
-
+	/*
+	* Unlink component to entity
+	* @param entity: entity to unlink.
+	*/
 	template<typename T>
 	void RemoveComponentToEntity(Entity* entity);
+
+#pragma region getter
 	//template<typename A>
 	//int GetTypes();
 
@@ -45,17 +59,35 @@ public:
 	//template<typename A, typename B, typename C, typename D, typename E, typename F, typename G>
 	//void GetTypes();
 
+#pragma endregion
+
 private:
 
-	std::vector<std::shared_ptr<Entity>> entities;
+	std::vector<Entity> entities;
 	std::map<std::string, int> typeMaps;
 	std::map<std::string, int> typeSizes;
 	std::map<std::string, int> typeNumberElement;
 	std::vector<std::string> typrOrder;
 	std::vector<char> datas;
 	std::vector<bool> actives;
-	Indexes GetIdexes(const std::string nameAsString, Entity* entity);
 
+	/*
+	* Get phisical index by given struct number.
+	* If entity do not have any struct type return -1
+	* @param nameAsString: name type to Check.
+	* @param entity: entity linked where get indicies.
+	* @return Indexes calss with logical index and phisical index.
+	*/
+	Indicies GetIdexes(const std::string nameAsString, Entity* entity);
+
+
+	/*
+	* Get phisical index by given struct number.
+	* If entity do not have any struct type return -1
+	* @param nameAsString: name type to Check.
+	* @param index: return logical index.
+	* @return true-> memory free in type | false-> memory not free in type.
+	*/
 	bool GetFalseInAtype(const std::string nameAsString, int& index);
 };
 
@@ -70,6 +102,7 @@ private:
 //	std::string nameAsString = std::string(name);
 //	int typeA = typeMaps[nameAsString];
 //}
+
 //template<typename A, typename B>
 //int* ECS_Content::GetTypes()
 //{
@@ -92,6 +125,7 @@ private:
 //	int arr[list.size()];
 //	std::copy(list.begin(), list.end(), arr);
 //}
+
 //template<typename A, typename B, typename C>
 //void ECS_Content::GetTypes()
 //{
@@ -107,27 +141,30 @@ private:
 //	nameAsString = std::string(name);
 //	int typeC = typeMaps[nameAsString];
 //}
+
 //template<typename A, typename B, typename C, typename D>
 //void ECS_Content::GetTypes()
 //{
 //
 //}
+
 //template<typename A, typename B, typename C, typename D, typename E>
 //void ECS_Content::GetTypes()
 //{
 //
 //}
+
 //template<typename A, typename B, typename C, typename D, typename E, typename F>
 //void ECS_Content::GetTypes()
 //{
 //
 //}
+
 //template<typename A, typename B, typename C, typename D, typename E, typename F, typename G>
 //void ECS_Content::GetTypes()
 //{
 //
 //}
-
 #pragma endregion
 
 template<typename T>
@@ -135,26 +172,35 @@ void ECS_Context::AddComponentToEntity(Entity* entity, const T baseData) {
 
 	int dataSize = sizeof(T);
 
+	//get name data name
 	const char* name = typeid(T).name();
 	std::string nameAsString = std::string(name);
 
-	//if (entity->HasType(typeMaps[nameAsString]))
+	//entity already has this component
+#pragma region Check if entity already has this component
 	int typeAsInteger = typeMaps.size() + 1;
 
 	if (entity->HasType(typeAsInteger))
 	{
 		throw "This entity already has this component ->" + nameAsString;
 	}
+#pragma endregion
+
+	//Check if is a struct
+#pragma region Check if is a struct
 
 	if (nameAsString.find("struct"))
 	{
 		throw "T type is not a struct";
 	}
-	auto contain = typeMaps.find(nameAsString);
+#pragma endregion
 
-	int f;
-	bool b = GetFalseInAtype(nameAsString, f);
-	if (contain == typeMaps.end())
+	int unactiveDataIndex;
+	bool haveHataNull = GetFalseInAtype(nameAsString, unactiveDataIndex);
+
+	//Check is there is already this struct registered
+	auto haveThisComponentAlready = typeMaps.find(nameAsString);
+	if (haveThisComponentAlready == typeMaps.end()) // not exist
 	{
 		//exist
 		typeMaps.insert(std::pair<std::string, int >(nameAsString, typeAsInteger));
@@ -162,32 +208,23 @@ void ECS_Context::AddComponentToEntity(Entity* entity, const T baseData) {
 		typeNumberElement.insert(std::pair<std::string, int >(nameAsString, 1));
 		typrOrder.push_back(nameAsString);
 	}
-	else if (b == false)
+	else if (haveHataNull == false) //exist
 	{
 		typeNumberElement[nameAsString]++;
 	}
 
-	//entity->AddType(nameAsString, typeNumberElement[nameAsString]);
+	//Link entity to data
 	entity->AddType(typeMaps[nameAsString], typeNumberElement[nameAsString]);
 
-	//long long index = 0;
-	//for (std::string orderedName : typrOrder) {
-	//	long long size = typeSizes[orderedName];
-	//	long long numofElements = typeNumberElement[orderedName] + (orderedName == nameAsString ? -1 : 0);
-	//	index += size * numofElements;
-	//	if (orderedName == nameAsString)
-	//	{
-	//		break;
-	//	}
-	//}
 
+	//check if there is a free data
 	auto indxes = GetIdexes(nameAsString, entity);
-	if (b)
+	if (haveHataNull)
 	{
-		actives[f] = true;
+		actives[unactiveDataIndex] = true;
 		char* charPtr = datas.data();
 		std::memcpy(charPtr + indxes.Ind1(), &baseData, dataSize);
-		
+
 	}
 	else
 	{
@@ -210,30 +247,16 @@ inline void ECS_Context::RemoveComponentToEntity(Entity* entity)
 {
 	int dataSize = sizeof(T);
 
+	//get name data name
 	const char* name = typeid(T).name();
 	std::string nameAsString = std::string(name);
 
-	//long long index = 0;
-	//long long indexXX = 0;
-	//for (std::string orderedName : typrOrder) {
-	//	long long size = typeSizes[orderedName];
-	//	long long numofElements = typeNumberElement[orderedName] + (orderedName == nameAsString ? -1 : 0);
-	//	index += size * numofElements;
-	//	indexXX +=  numofElements;
-	//	if (orderedName == nameAsString)
-	//	{
-	//		break;
-	//	}
-	//}
+	//find pointer of data to set free
 	auto indxes = GetIdexes(nameAsString, entity);
 
-
-	//actives[indexXX] = false;
+	//copy new data
 	actives[indxes.Ind2()] = false;
 	char zeroDatas[sizeof(T)] = {};
-
-	//std::memcpy(&datas[index], &zeroDatas, dataSize);
 	std::memcpy(&datas[indxes.Ind1()], &zeroDatas, dataSize);
-
 
 }
