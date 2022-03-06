@@ -147,6 +147,8 @@
     <ClInclude Include="Heder\Component.h" />
     <ClInclude Include="Heder\ECS_Context.h" />
     <ClInclude Include="Heder\Entity.h" />
+    <ClInclude Include="Heder\Exeptions.h" />
+    <ClInclude Include="Heder\Macros.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

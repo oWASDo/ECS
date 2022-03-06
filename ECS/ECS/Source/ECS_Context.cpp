@@ -1,93 +1,76 @@
 #include "../Heder/ECS_Context.h"
 
-
 ECS_Context::ECS_Context()
 {
-
 }
 
 ECS_Context::~ECS_Context()
 {
 	entities.clear();
-	typeMaps.clear();
-	typeSizes.clear();
-	typeNumberElement.clear();
-	typrOrder.clear();
-	datas.clear();
-}
+	for (auto data : vectorOfDatasOfDatas) {
+		data->clear();
+		data->shrink_to_fit();
+		delete data;
 
-
-Entity* ECS_Context::CreateAndAddEntity() {
-
-	//create new entity and adde to the Entities vector
-	entities.push_back(Entity());
-	std::vector <Entity>::iterator it = entities.begin();
-	Entity* p = &(*it);
-	return p;
-}
-
-
-Indicies ECS_Context::GetIdexes(const std::string nameAsString, Entity* entity) {
-	size_t index = 0;
-	size_t indexXX = 0;
-	int indexType = typeMaps[nameAsString];
-	int arrayPosition = entity->GetIndexByType(indexType) - 1;
-
-	for (std::string orderedName : typrOrder) {
-		size_t size = typeSizes[orderedName];
-		int numofElements = typeNumberElement[orderedName] +
-			(orderedName == nameAsString ? -1 : 0);
-
-		size_t numOfElements2 =
-			typeNumberElement[orderedName];
-
-		index += size * numofElements;
-		if (orderedName == nameAsString)
-		{
-			indexXX += arrayPosition;
-			break;
-		}
-		indexXX += numOfElements2;
 	}
-	return Indicies(index, indexXX);
+	for (auto actives : vectorOfActivesOfActives) {
+		actives->clear();
+		actives->shrink_to_fit();
+		delete actives;
+	}
+	vectorOfDatasOfDatas.clear();
+	vectorOfDatasOfDatas.shrink_to_fit();
+
+	vectorOfActivesOfActives.clear();
+	vectorOfActivesOfActives.shrink_to_fit();
+
+	typeOrder.clear();
+	typeOrder.shrink_to_fit();
+
+	componentsNameCode.clear();
+	componentsSize.clear();
+	nuberOfElementPerComponentType.clear();
+
 }
 
-bool ECS_Context::GetFalseInAtype(const std::string nameAsString, int& index) {
-	size_t start = 0;
-	size_t end = 0;
-	int indexType = typeMaps[nameAsString];
 
-	for (std::string orderedName : typrOrder) {
+int ECS_Context::CreateAndAddEntity() {
 
-		size_t numOfElement = typeNumberElement[orderedName];
-		end += numOfElement;
+	entities.emplace(entities.end(), Entity());
 
-		if (orderedName == nameAsString)
-		{
+	return 0;
+}
 
-			break;
-		}
-		start += numOfElement;
-	}
 
-	if (actives.size() != 0/* || actives.size() != 0*/)
+bool ECS_Context::NameCodeContainsKey(std::string stringToCheck)
+{
+
+	return !NotExistKeyInMap(componentsNameCode, stringToCheck);
+}
+
+size_t ECS_Context::NameCodeGetCode(std::string stringToCheck)
+{
+	if (NameCodeContainsKey(stringToCheck))
 	{
-		auto f = actives.begin() + start;
-		auto l = actives.begin() + end;
-		std::vector<bool> vecs = { f, l };
-		bool a = std::find(std::begin(vecs), std::end(vecs), true) == std::end(vecs);
-		int ind = 0;
-		for (bool b : vecs) {
-			if (!b)
-			{
-				index = ind + start;
-				return true;
-			}
-			ind++;
-		}
+		//return nameCode[stringToCheck];
+		return componentsNameCode.at(stringToCheck);
 	}
+	return 10000000000;
+}
 
-	return false;
+int ECS_Context::GetLogicIndexFromName(std::string nameAsString)
+{
+	int dataTypeAsNuber = 0;
+	for (auto t : typeOrder)
+	{
+		if (t == nameAsString)
+		{
+			break;
+		}
+		dataTypeAsNuber++;
+	}
+	return dataTypeAsNuber;
+
 }
 
 

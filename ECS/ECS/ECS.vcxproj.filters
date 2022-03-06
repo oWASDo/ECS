@@ -35,5 +35,11 @@
     <ClInclude Include="Heder\ECS_Context.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Heder\Macros.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Heder\Exeptions.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

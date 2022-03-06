@@ -1,37 +1,37 @@
 #pragma once
 
+//
+//struct Indicies
+//{
+//private:
+//	size_t index1;
+//	size_t index2;
+//public:
+//	Indicies() {
+//		index1 = 0;
+//		index2 = 0;
+//	}
+//	Indicies(size_t i1, size_t i2) :index1(i1), index2(i2) {
+//
+//	}
+//
+//	size_t Ind1() {
+//		return index1;
+//	}
+//	size_t Ind2() {
+//		return index2;
+//	}
+//};
 
-struct Indicies
+struct Integer
 {
-private:
-	size_t index1;
-	size_t index2;
-public:
-	Indicies() {
-		index1 = 0;
-		index2 = 0;
-	}
-	Indicies(size_t i1, size_t i2) :index1(i1), index2(i2) {
-
-	}
-
-	size_t Ind1() {
-		return index1;
-	}
-	size_t Ind2() {
-		return index2;
-	}
-};
-
-struct Integet
-{
-	Integet()
+	Integer()
 	{
 		integer = 0;
 	}
-	Integet(int newInt): integer(newInt)
+	Integer(int newInt): integer(newInt)
 	{
-
+		integer = 5500;
 	}
 	int integer;
 };
@@ -98,4 +98,6 @@ struct Vector2
 	float x;
 	float y;
 };
+
+
 
